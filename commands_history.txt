@@ -1,0 +1,14 @@
+# Install nest cli:
+npm install -g @nestjs/cli
+
+# Create new module:
+nest g module <module_name>
+
+# Add a controller:
+nest g controller <module_name> --no-spec
+
+# Add a service:
+nest g service <module_name> --no-spec
+
+# Install uuid
+npm install --save uuid
