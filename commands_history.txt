@@ -12,3 +12,6 @@ nest g service <module_name> --no-spec
 
 # Install uuid
 npm install --save uuid
+
+# Install validators
+npm install --save class-validator class-transformer
