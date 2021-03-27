@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import * as config from 'config';
+import { LoggerModule } from '../logger/logger.module';
+import { LoggerService } from '../logger/logger.service';
 
 const jwtConfig = config.get('jwt');
 
@@ -20,9 +22,10 @@ const jwtConfig = config.get('jwt');
       },
     }),
     TypeOrmModule.forFeature([UserRepository]),
+    LoggerModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, LoggerService],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

@@ -21,17 +21,22 @@ import { TaskStatus } from './enums/task-status.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/entities/user.entity';
 import { GetUser } from '../auth/decorators/get-user.decorator';
+import { LoggerService } from '../logger/logger.service';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
-  constructor(private tasksService: TasksService) {}
+  constructor(
+    private tasksService: TasksService,
+    private readonly logger: LoggerService,
+  ) {}
 
   @Get()
   getTasks(
     @Query(ValidationPipe) tasksFilter: GetTasksFiltersDto,
     @GetUser() user: User,
   ): Promise<Task[]> {
+    this.logger.info(`Received request for get tasks`);
     return this.tasksService.getTasks(tasksFilter, user);
   }
 
@@ -40,6 +45,7 @@ export class TasksController {
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
   ): Promise<Task> {
+    this.logger.info(`Received request for get task with ID [${id}]`);
     return this.tasksService.getTaskById(id, user);
   }
 
@@ -49,6 +55,7 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
   ): Promise<Task> {
+    this.logger.info(`Received request for create task`);
     return this.tasksService.createTask(createTaskDto, user);
   }
 
@@ -57,6 +64,7 @@ export class TasksController {
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
   ): Promise<void> {
+    this.logger.info(`Received request for deleteTask with ID [${id}]`);
     return this.tasksService.deleteTask(id, user);
   }
 
@@ -66,6 +74,9 @@ export class TasksController {
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
     @GetUser() user: User,
   ): Promise<Task> {
+    this.logger.info(
+      `Received request for update task status with ID [${id}] and status ${status}`,
+    );
     return this.tasksService.updateTaskStatus(id, status, user);
   }
 }

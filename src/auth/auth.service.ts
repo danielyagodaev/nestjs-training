@@ -3,6 +3,7 @@ import { UserRepository } from './repositories/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
     private jwtService: JwtService,
+    private readonly logger: LoggerService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -24,6 +26,9 @@ export class AuthService {
     );
 
     if (!username) {
+      this.logger.error(
+        `Username ${authCredentialsDto.username} provided invalid credentials`,
+      );
       throw new UnauthorizedException('Invalid credentials');
     }
 

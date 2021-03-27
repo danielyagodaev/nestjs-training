@@ -6,12 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { TaskStatus } from './enums/task-status.enum';
 import { User } from '../auth/entities/user.entity';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectRepository(TaskRepository)
     private taskRepository: TaskRepository,
+    private readonly logger: LoggerService,
   ) {}
 
   async getTaskById(id: number, user: User): Promise<Task> {
@@ -19,6 +21,7 @@ export class TasksService {
       where: { id, userId: user.id },
     });
     if (!task) {
+      this.logger.error(`Task ID [${id}] was not found`);
       throw new NotFoundException(`Task ID [${id}] was not found`);
     }
     return task;
@@ -35,6 +38,7 @@ export class TasksService {
   async deleteTask(id: number, user: User): Promise<void> {
     const result = await this.taskRepository.delete({ id, userId: user.id });
     if (result.affected === 0) {
+      this.logger.error(`Task ID [${id}] was not found`);
       throw new NotFoundException(`Task ID [${id}] was not found`);
     }
   }
